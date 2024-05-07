@@ -34,6 +34,8 @@ func main() {
 	// Creating Echo instance
 	e := echo.New()
 
+	e.HTTPErrorHandler = handlers.ErrorHandler
+
 	// Register middleware for error handling
 	e.Use(middleware.Recover())
 
@@ -41,6 +43,6 @@ func main() {
 	handlers.RegisterHandlers(e, db)
 
 	// New http server
-	fmt.Println("Starting server on port 8080")
+	fmt.Println("Starting server on port 8080...")
 	log.Fatal(e.Start(":8080"))
 }

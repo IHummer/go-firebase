@@ -10,6 +10,20 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+func ErrorHandler(err error, c echo.Context) {
+	// Cast err to *echo.HTTPError
+	httpError := err.(*echo.HTTPError)
+
+	// Create a custom response
+	response := map[string]interface{}{
+		"message": httpError.Message,
+		"status":  httpError.Code,
+	}
+
+	// Send the custom response
+	c.JSON(httpError.Code, response)
+}
+
 // Registrar manejadores de solicitudes
 func RegisterHandlers(e *echo.Echo, db *firestore.Client) {
 	// Crear producto
@@ -27,12 +41,12 @@ func createProduct(db *firestore.Client) echo.HandlerFunc {
 		}
 
 		if err := p.Validate(); err != nil {
-			return c.JSON(http.StatusBadRequest, err.Error())
+			return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 		}
 
 		_, _, err := database.CreateProduct(db, p)
 		if err != nil {
-			return c.JSON(http.StatusInternalServerError, err.Error())
+			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 		}
 
 		return c.JSON(http.StatusOK, p)

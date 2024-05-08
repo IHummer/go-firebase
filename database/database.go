@@ -7,23 +7,29 @@ import (
 	"github.com/ihummer/go-firebase/models"
 )
 
-// CreateProduct creates a new product in the database
-func CreateProduct(db *firestore.Client, p *models.Product) (string, *firestore.DocumentRef, error) {
-	ref, _, err := db.Collection("products").Add(context.Background(), p)
-	if err != nil {
-		return "", nil, err
-	}
-
-	return ref.ID, ref, nil
+type Database interface {
+	CreateProduct(db *firestore.Client, p *models.Product) (string, error)
+	GetAllProducts(db *firestore.Client) ([]*models.Product, error)
 }
 
-func GetAllProducts(db *firestore.Client) ([]*models.Product, error) {
-	// iter := db.Collection("products").Documents(context.Background())
-	var products []*models.Product
+type FirestoreDatabase struct{}
 
+func (f FirestoreDatabase) CreateProduct(db *firestore.Client, p *models.Product) (string, error) {
+	ref, _, err := db.Collection("products").Add(context.Background(), p)
+	if err != nil {
+		return "", err
+	}
+
+	return ref.ID, nil
+}
+
+func (f FirestoreDatabase) GetAllProducts(db *firestore.Client) ([]*models.Product, error) {
+	// iter := db.Collection("products").Documents(context.Background())
+
+	var products []*models.Product
 	// for {
 	// 	doc, err := iter.Next()
-	// 	if err == iter. {
+	// 	if err == iterator.Done {
 	// 		break
 	// 	}
 	// 	if err != nil {

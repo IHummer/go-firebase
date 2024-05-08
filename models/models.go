@@ -4,6 +4,13 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
+type UserModel struct {
+	Uuid     string
+	Name     string
+	Email    string
+	Password string
+}
+
 type Product struct {
 	ID          string  `json:"id" validate:"required"`
 	Name        string  `json:"name" validate:"required"`

@@ -14,23 +14,21 @@ func ErrorHandler(err error, c echo.Context) {
 	// Cast err to *echo.HTTPError
 	httpError := err.(*echo.HTTPError)
 
-	// Create a custom response
+	// Creating the custom response
 	response := map[string]interface{}{
 		"message": httpError.Message,
 		"status":  httpError.Code,
 	}
 
-	// Send the custom response
 	c.JSON(httpError.Code, response)
 }
 
-// Registrar manejadores de solicitudes
 func RegisterHandlers(e *echo.Echo, db *firestore.Client) {
-	// Crear producto
+
 	e.POST("/products", createProduct(db))
 
-	// Obtener todos los productos
 	e.GET("/products", getAllProducts(db))
+
 }
 
 func createProduct(db *firestore.Client) echo.HandlerFunc {
@@ -44,7 +42,10 @@ func createProduct(db *firestore.Client) echo.HandlerFunc {
 			return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 		}
 
-		_, _, err := database.CreateProduct(db, p)
+		f := new(database.FirestoreDatabase)
+
+		_, err := f.CreateProduct(db, p)
+
 		if err != nil {
 			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 		}
@@ -55,7 +56,9 @@ func createProduct(db *firestore.Client) echo.HandlerFunc {
 
 func getAllProducts(db *firestore.Client) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		products, err := database.GetAllProducts(db)
+		f := new(database.FirestoreDatabase)
+
+		products, err := f.GetAllProducts(db)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, err.Error())
 		}

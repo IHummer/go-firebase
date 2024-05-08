@@ -24,7 +24,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// Inicializar base de datos Firestore
+	// Initialize Firestore database
 	db, err := app.Firestore(context.Background())
 	if err != nil {
 		log.Fatal(err)
@@ -34,9 +34,8 @@ func main() {
 	// Creating Echo instance
 	e := echo.New()
 
-	e.HTTPErrorHandler = handlers.ErrorHandler
-
 	// Register middleware for error handling
+	e.HTTPErrorHandler = handlers.ErrorHandler
 	e.Use(middleware.Recover())
 
 	// Creating petition handlers
